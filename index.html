@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<link rel="manifest" href="manifest.json">
+	<meta name="theme-color" content="#ffffff">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カウンターアプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>カウンター: <span id="counter">0</span></h1>
+    <button onclick="add(300)">+300</button>
+    <button onclick="add(600)">+600</button>
+	<button onclick="add(600)">+600</button>
+	<button onclick="resetCounter()">リセット</button>
+
+    <script>
+        let counter = 0;
+
+        // ローカルストレージからカウント値を取得して表示
+        window.onload = function() {
+            const savedCounter = localStorage.getItem('counter');
+            if (savedCounter !== null) {
+                counter = parseInt(savedCounter, 10);
+                document.getElementById('counter').textContent = counter;
+            }
+        };
+
+        function add(value) {
+            counter += value;
+            document.getElementById('counter').textContent = counter;
+            localStorage.setItem('counter', counter);  // カウント値をローカルストレージに保存
+        }
+
+        function resetCounter() {
+            counter = 0;
+            document.getElementById('counter').textContent = counter;
+            localStorage.setItem('counter', counter);  // リセット後の値を保存
+        }
+    </script>
+
+</body>
+</html>
