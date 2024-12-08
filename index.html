@@ -18,40 +18,77 @@
             padding: 10px 20px;
             margin: 10px;
         }
+        .button-info {
+            font-size: 14px;
+            color: gray;
+        }
     </style>
 </head>
 <body>
 
     <h1>カウンター: <span id="counter">0</span></h1>
-    <button onclick="add(300)">+300</button>
-    <button onclick="add(600)">+600</button>
-	<button onclick="add(960)">+960</button>
-	<button onclick="resetCounter()">リセット</button>
+    <div>
+        <button onclick="add(300, 'count1')">+300</button>
+        <div id="info1" class="button-info">あと1</div>
+    </div>
+    <div>
+        <button onclick="add(600, 'count2')">+600</button>
+        <div id="info2" class="button-info">あと4</div>
+    </div>
+    <div>
+        <button onclick="add(960, 'count3')">+960</button>
+        <div id="info3" class="button-info">あと3</div>
+    </div>
+    <button onclick="resetCounter()">リセット</button>
 
     <script>
         let counter = 0;
 
-        // ローカルストレージからカウント値を取得して表示
+        // 各ボタンのカウント状態を格納
+        const initialCounts = { count1: 1, count2: 4, count3: 3 };
+        let buttonCounts = { ...initialCounts };
+
+        // ローカルストレージからデータを取得して表示
         window.onload = function() {
             const savedCounter = localStorage.getItem('counter');
+            const savedCounts = localStorage.getItem('buttonCounts');
             if (savedCounter !== null) {
                 counter = parseInt(savedCounter, 10);
                 document.getElementById('counter').textContent = counter;
             }
+            if (savedCounts !== null) {
+                buttonCounts = JSON.parse(savedCounts);
+                updateButtonInfo();
+            }
         };
 
-        function add(value) {
-            counter += value;
-            document.getElementById('counter').textContent = counter;
-            localStorage.setItem('counter', counter);  // カウント値をローカルストレージに保存
+        function add(value, buttonId) {
+            if (buttonCounts[buttonId] > 0) {
+                counter += value;
+                document.getElementById('counter').textContent = counter;
+                buttonCounts[buttonId]--;
+                updateButtonInfo();
+                localStorage.setItem('counter', counter); // カウント値を保存
+                localStorage.setItem('buttonCounts', JSON.stringify(buttonCounts)); // ボタン情報を保存
+            }
         }
 
         function resetCounter() {
             counter = 0;
             document.getElementById('counter').textContent = counter;
-            localStorage.setItem('counter', counter);  // リセット後の値を保存
+            buttonCounts = { ...initialCounts };
+            updateButtonInfo();
+            localStorage.setItem('counter', counter); // リセット後の値を保存
+            localStorage.setItem('buttonCounts', JSON.stringify(buttonCounts)); // ボタン情報を保存
+        }
+
+        function updateButtonInfo() {
+            document.getElementById('info1').textContent = `あと${buttonCounts.count1}`;
+            document.getElementById('info2').textContent = `あと${buttonCounts.count2}`;
+            document.getElementById('info3').textContent = `あと${buttonCounts.count3}`;
         }
     </script>
 
 </body>
 </html>
+
